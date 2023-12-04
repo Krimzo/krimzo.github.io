@@ -23,21 +23,6 @@ class GrowthDuration {
         }
         return this.juvenile + this.subadult + this.adult
     }
-
-    formatGrowth() {
-        const keys = Object.keys(this)
-        const last_index = keys.length - 1
-
-        let result = ""
-        for (let i = 0; i < last_index; i++) {
-            result += this[keys[i]] + " + "
-        }
-        result += this[keys[last_index]] + " = " + this.fullGrowth(true)
-        if (this.hatchling) {
-            result += "(" + this.fullGrowth(false) + ")"
-        }
-        return result
-    }
 }
 
 class Dinosaur {
@@ -107,12 +92,78 @@ const dino_header_parts = [
     "Health", "Main Damage", "Alternate Damage", "Bleed Damage",
 ]
 
+function get_table_value(row_index, col_index) {
+    return dino_table.rows[row_index].children.item(col_index)
+}
+
+function compare_table_values(col_index, first_row, second_row) {
+    let first = get_table_value(first_row, col_index)
+    let second = get_table_value(second_row, col_index)
+
+    if (col_index === 6) {
+        first = first.children.item(5).innerHTML.toLowerCase()
+        second = second.children.item(5).innerHTML.toLowerCase()
+    }
+    else {
+        first = first.innerHTML.toLowerCase()
+        second = second.innerHTML.toLowerCase()
+    }
+
+    const first_num = Number(first)
+    const second_num = Number(second)
+    if (!isNaN(first_num) && !isNaN(second_num)) {
+        first = second_num
+        second = first_num
+    }
+
+    if (first < second) {
+        return -1
+    }
+    if (first > second) {
+        return 1
+    }
+    return 0
+}
+
+const sorting_info = {
+    last_index: -1,
+    is_ascending: false,
+}
+
+function compare_helper(compare_result) {
+    if (sorting_info.is_ascending) {
+        return compare_result < 0
+    }
+    return compare_result > 0
+}
+
+function handleHeaderClick(index) {
+    sorting_info.is_ascending = (index === sorting_info.last_index) ? !sorting_info.is_ascending : true
+    sorting_info.last_index = index
+    
+    for (let i = 1; i < dino_table.rows.length; i++) {
+        for (let j = 1; j < dino_table.rows.length; j++) {
+            const index_compare = compare_table_values(index, i, j)
+            const name_compare = compare_table_values(1, i, j)
+            if (compare_helper(index_compare) || (index_compare === 0 && compare_helper(name_compare))) {
+                dino_table.rows[i].parentNode.insertBefore(dino_table.rows[j], dino_table.rows[i])
+                dino_table.rows[j].parentNode.insertBefore(dino_table.rows[i], dino_table.rows[j])
+            }
+        }
+    }
+}
+
 const header_row = document.createElement("tr")
-dino_header_parts.forEach(header_part => {
+for (let i = 0; i < dino_header_parts.length; i++) {
     const header_col = document.createElement("th")
-    header_col.append(header_part)
+    header_col.className = "hover_item"
+    header_col.style.cursor = "pointer"
+    header_col.append(dino_header_parts[i])
+    header_col.onclick = () => {
+        handleHeaderClick(i)
+    }
     header_row.append(header_col)
-});
+}
 dino_table.append(header_row)
 
 function getTextColor(text) {
@@ -144,11 +195,45 @@ dinosaurs.forEach(dino => {
         }
 
         if (value instanceof GrowthDuration) {
-            const growth = value.formatGrowth()
-            table_col.append(growth)
             table_col.style.whiteSpace = "nowrap"
+            table_col.style.display = "flex"
+            table_col.style.justifyContent = "center"
+            table_col.style.alignItems = "center"
+
+            Object.keys(value).forEach(key => {
+                const growth_col = document.createElement("td")
+                growth_col.className = "hover_item"
+                growth_col.style.flex = "1"
+                growth_col.style.border = "solid rgb(50, 50, 50) 1px"
+                growth_col.style.padding = "5px"
+                growth_col.style.margin = "2px"
+                growth_col.append(value[key])
+                table_col.append(growth_col)
+            })
+
+            const equals_td = document.createElement("td")
+            equals_td.style.padding = "5px"
+            equals_td.style.flex = "1"
+            equals_td.append("=")
+            table_col.append(equals_td)
+
+            const full_growth_cols = [document.createElement("td"), document.createElement("td")]
+            full_growth_cols.forEach(col => {
+                col.className = "hover_item"
+                col.style.border = "solid rgb(50, 50, 50) 1px"
+                col.style.verticalAlign = "baseline"
+                col.style.padding = "5px"
+                col.style.margin = "2px"
+                col.style.flex = "1"
+                table_col.append(col)
+            })
+
+            full_growth_cols[0].style.border = "solid rgb(75, 75, 75) 1px"
+            full_growth_cols[0].append(value.fullGrowth(false))
+            full_growth_cols[1].append(value.fullGrowth(true))
         }
         else {
+            table_col.className = "hover_item"
             table_col.append(value)
             table_col.style.color = getTextColor(value)
         }

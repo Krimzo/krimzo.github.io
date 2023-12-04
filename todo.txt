@@ -1,7 +1,5 @@
 # table
 find missing data
-table hovering
-sorting rows
 
 # damage calculator
 
