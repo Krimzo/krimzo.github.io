@@ -1,0 +1,35 @@
+/* Global */
+::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    background-color: rgb(30, 30, 30);
+    font-family: 'Roboto', sans-serif;
+}
+
+th, tr, td {
+    padding: 10px;
+    background-color: rgb(30, 30, 30);
+}
+
+/* Class */
+.hover_item:hover {
+    background-color: rgb(45, 45, 45);
+}
+
+/* Id */
+#main_title {
+    text-align: center;
+    color: white;
+    margin-top: 32px;
+}
+
+#dino_table {
+    width: 100%;
+    background-color: rgb(15, 15, 15);
+    border: 1px solid rgb(120, 120, 120);
+    text-align: center;
+    color: white;
+    margin-top: 32px;
+}
