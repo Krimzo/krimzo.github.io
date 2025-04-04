@@ -8,7 +8,9 @@ html {
     font-family: 'Roboto', sans-serif;
 }
 
-th, tr, td {
+th,
+tr,
+td {
     padding: 10px;
     background-color: rgb(30, 30, 30);
 }
