@@ -20,7 +20,7 @@ const polaroidVariants: Record<PolaroidVariant, string> = {
   '4x3': 'w-20 h-16',
   '3x4': 'w-[4.5rem] h-24',
   '9x16': 'w-20 h-32',
-  '5x2': 'w-200 h-80',
+  '5x2': 'w-80 h-32',
 }
 
 const PolaroidCard: React.FC<Props> = ({ screen, index, totalScreens, rotation, variant, isVisible, isClicked = false }) => {

@@ -22,14 +22,17 @@ const ScreenGalleryModal: React.FC<Props> = ({ screens, title, description, isOp
   const gap = 16 // gap-4 = 1rem = 16px
   const [canAnimate, setCanAnimate] = useState(false)
 
-  // 动态获取容器宽度，适配响应式
   useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth)
-    }
-  }, [isOpen])
+    const el = containerRef.current;
+    if (!el)
+      return;
+    const observer = new ResizeObserver(([entry]) => {
+      setContainerWidth(entry.contentRect.width);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isOpen]);
 
-  // 切换图片时，平滑动画到目标位置
   useEffect(() => {
     if (!isOpen) return
     if (canAnimate) {
@@ -139,7 +142,7 @@ const ScreenGalleryModal: React.FC<Props> = ({ screens, title, description, isOp
           {/* 弹窗卡片 */}
           <motion.div
             key="modal-content"
-            className="relative bg-background shadow-2xl max-w-lg w-full mx-4 p-6"
+            className="relative bg-background shadow-2xl max-w-screen w-full mx-4 p-6"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, y: 60, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
