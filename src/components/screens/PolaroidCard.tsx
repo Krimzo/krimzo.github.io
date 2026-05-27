@@ -1,12 +1,12 @@
 import React from 'react'
 import { motion } from 'motion/react'
-import type { Photo, PolaroidVariant } from '~/types'
+import type { Screen, PolaroidVariant } from '~/types'
 import { cn } from '~/lib/utils'
 
 interface Props {
-  photo: Photo
+  screen: Screen
   index: number
-  totalPhotos: number
+  totalScreens: number
   rotation: number
   variant: PolaroidVariant
   isVisible: boolean
@@ -22,15 +22,15 @@ const polaroidVariants: Record<PolaroidVariant, string> = {
   '9x16': 'w-20 h-32',
 }
 
-const PolaroidCard: React.FC<Props> = ({ photo, index, totalPhotos, rotation, variant, isVisible, isClicked = false }) => {
-  const baseZIndex = totalPhotos - index
+const PolaroidCard: React.FC<Props> = ({ screen, index, totalScreens, rotation, variant, isVisible, isClicked = false }) => {
+  const baseZIndex = totalScreens - index
   // 根据图片位置计算移动距离，后面的图片移动得更多
   const moveDistance = index === 0 ? 0 : 25 // 第一张20px，第二张40px，第三张60px...
 
   // 处理图片源：支持字符串路径和 Astro ImageMetadata 对象
-  const imgSrc = typeof photo.src === 'string' ? photo.src : photo.src.src
-  const imgWidth = typeof photo.src === 'string' ? photo.width : photo.src.width
-  const imgHeight = typeof photo.src === 'string' ? photo.height : photo.src.height
+  const imgSrc = typeof screen.src === 'string' ? screen.src : screen.src.src
+  const imgWidth = typeof screen.src === 'string' ? screen.width : screen.src.width
+  const imgHeight = typeof screen.src === 'string' ? screen.height : screen.src.height
 
   return (
     <motion.div
@@ -47,7 +47,7 @@ const PolaroidCard: React.FC<Props> = ({ photo, index, totalPhotos, rotation, va
       initial={'hidden'}
       animate={isClicked ? 'clicked' : isVisible ? 'show' : 'hidden'}
       variants={{
-        hidden: { scale: 0, rotate: 0, x: -60, zIndex: totalPhotos - index },
+        hidden: { scale: 0, rotate: 0, x: -60, zIndex: totalScreens - index },
         show: { scale: 1, rotate: rotation, x: 0 },
         clicked: {
           scale: 1,
@@ -89,7 +89,7 @@ const PolaroidCard: React.FC<Props> = ({ photo, index, totalPhotos, rotation, va
           className="w-full h-full object-cover"
           loading="lazy"
           decoding="async"
-          alt={photo.alt}
+          alt={screen.alt}
         />
       </div>
     </motion.div>

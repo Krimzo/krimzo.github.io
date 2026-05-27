@@ -1,12 +1,12 @@
 import React from 'react'
 import { motion, useInView } from 'motion/react'
-import type { Photo } from '~/types'
+import type { Screen } from '~/types'
 import { cn } from '~/lib/utils'
 import PolaroidCard from './PolaroidCard'
-import PhotoGalleryModal from './PhotoGalleryModal'
+import ScreenGalleryModal from './ScreenGalleryModal'
 
 interface Props {
-  photos: Photo[]
+  screens: Screen[]
   title: string
   description?: string
   className?: string
@@ -15,20 +15,20 @@ interface Props {
 // 生成随机旋转角度
 const generateRotations = (count: number) => Array.from({ length: count }, () => Math.random() * 20 - 10)
 
-const PolaroidStack: React.FC<Props> = ({ photos, title, description, className }) => {
+const PolaroidStack: React.FC<Props> = ({ screens, title, description, className }) => {
   const ref = React.useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.4 })
   const [isModalOpen, setIsModalOpen] = React.useState(false)
   const [shouldRenderModal, setShouldRenderModal] = React.useState(false)
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = React.useState(0)
-  const [clickedPhotoIndex, setClickedPhotoIndex] = React.useState<number | null>(null)
+  const [selectedScreenIndex, setSelectedScreenIndex] = React.useState(0)
+  const [clickedScreenIndex, setClickedScreenIndex] = React.useState<number | null>(null)
   const openTimerRef = React.useRef<number | null>(null)
   const closeTimerRef = React.useRef<number | null>(null)
 
   // 为每张照片生成固定的旋转角度
-  const photoRotations = React.useMemo(() => generateRotations(photos.length), [photos.length])
+  const screenRotations = React.useMemo(() => generateRotations(screens.length), [screens.length])
 
-  const handlePhotoClick = (index: number) => {
+  const handleScreenClick = (index: number) => {
     if (closeTimerRef.current) {
       window.clearTimeout(closeTimerRef.current)
       closeTimerRef.current = null
@@ -40,8 +40,8 @@ const PolaroidStack: React.FC<Props> = ({ photos, title, description, className 
     }
 
     setShouldRenderModal(true)
-    setClickedPhotoIndex(index)
-    setSelectedPhotoIndex(index)
+    setClickedScreenIndex(index)
+    setSelectedScreenIndex(index)
 
     openTimerRef.current = window.setTimeout(() => {
       setIsModalOpen(true)
@@ -58,7 +58,7 @@ const PolaroidStack: React.FC<Props> = ({ photos, title, description, className 
     setIsModalOpen(false)
 
     closeTimerRef.current = window.setTimeout(() => {
-      setClickedPhotoIndex(null)
+      setClickedScreenIndex(null)
       setShouldRenderModal(false)
       closeTimerRef.current = null
     }, 200)
@@ -79,29 +79,29 @@ const PolaroidStack: React.FC<Props> = ({ photos, title, description, className 
   return (
     <>
       <motion.div ref={ref} className={cn('relative perspective-1000 ml-4 flex flex-wrap items-center ', className)}>
-        {photos.map((photo, index) => (
-          <div key={typeof photo.src === 'string' ? photo.src : photo.src.src} onClick={() => handlePhotoClick(index)}>
+        {screens.map((screen, index) => (
+          <div key={typeof screen.src === 'string' ? screen.src : screen.src.src} onClick={() => handleScreenClick(index)}>
             <PolaroidCard
-              photo={photo}
+              screen={screen}
               index={index}
-              totalPhotos={photos.length}
-              rotation={photoRotations[index]}
-              variant={photo.variant}
+              totalScreens={screens.length}
+              rotation={screenRotations[index]}
+              variant={screen.variant}
               isVisible={isInView}
-              isClicked={clickedPhotoIndex === index}
+              isClicked={clickedScreenIndex === index}
             />
           </div>
         ))}
       </motion.div>
 
       {shouldRenderModal && (
-        <PhotoGalleryModal
-          photos={photos}
+        <ScreenGalleryModal
+          screens={screens}
           title={title}
           description={description}
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          initialIndex={selectedPhotoIndex}
+          initialIndex={selectedScreenIndex}
         />
       )}
     </>
