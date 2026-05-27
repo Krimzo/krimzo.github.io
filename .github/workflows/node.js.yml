@@ -15,5 +15,5 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
-    with:
-      path: ./dist
+      - with:
+        path: ./dist
