@@ -34,7 +34,7 @@ const duplicateSkills = (skills: Skill[]) => [...skills, ...skills, ...skills, .
                     class="skill-inner group flex items-center gap-2 px-3 py-1.5 text-foreground whitespace-nowrap transition-all duration-200"
                     {...props}
                   >
-                    <span class={cn('flex items-center justify-center w-5 h-5', skill.icon)} />
+                    <img class={'flex items-center justify-center w-5 h-5'} src={skill.icon}/>
                     <span class="font-sans text-sm font-medium">{skill.name}</span>
                   </Tag>
                 </div>
