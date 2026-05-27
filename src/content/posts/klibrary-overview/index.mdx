@@ -11,50 +11,49 @@ license: 'CC-BY-NC-SA-4.0'
 
 ## About
 
-C++ can be a daunting language on it's own but when you also include Wndows API and other of it's features it becomes insane, really fast. The purpose of my library is to hide and simplify most of the boilerplate requirements allowing the user to focus on their main goal.  
+C++ can be a daunting language on it's own, but when you also include Windows API and other of it's features it becomes insane, really fast. The purpose of my library is to hide and simplify most of the boilerplate requirements allowing the user to focus on their main goal.  
 
 Let's overview library parts in the future sections.
 
 ### APIs
 
-*will continue one day*
+The APIs section includes header files from other large libraries and sorts them in the correct order. Other than headers it also links the needed library files while defining the necessary macros.  
+
+Since there is a lot of code in these header files (especially windows.h) I recommend using **precompiled headers**.
 
 ### Graphics
 
-*will continue one day*
+Graphics section focuses on **Direct3D 11 and 12** (more focus on 11). It defines a GPU struct which contains all the necessary functions which a device (gpu...) should provide/need. Other than that it also simplifies the shader handling with Shaders struct (loading from files, compiling, linking and such).
 
 ### JSON
 
-*will continue one day*
+JSON part of the library is used for **JSON reading and writing** (obviosuly). The implementation was completely written by me (expect bugs?) just like 99% of the library.
 
 ### Math
 
-*will continue one day*
+Linear algebra (**vectors and matrices**) as well as other math functions for raytracing agains spheres, boxes etc.
 
 ### Media
 
-*will continue one day*
+My **personal favourite** part of the library. Includes reading/writing of **image, audio and video files**.
 
 ### Render
 
-*will continue one day*
+Mostly focused on helping create a 3D scene with some predifind structs like **Mesh, Texture, Material, Entity, Camera, Light** etc.
 
 ### Time
 
-*will continue one day*
+The **most precise time measurement** and timer functions available in windows.
 
 ### Web
 
-*will continue one day*
+Reading website data as well as **creating sockets (TCP and UDP)**. One of the latest additions focuses on creating an **HTTP server** (available in the examples folder of the [github repo](https://github.com/Krimzo/KLibrary)).
 
 ### Window
 
-*will continue one day*
-
-## Example Usages
-
-*will continue one day*
+Creation of Windows windows :) as well as input handling (**mouse and keyboard**). It is also compatible with the popular GUI library [imgui](https://github.com/ocornut/imgui) (it is necessary to define KL_USING_IMGUI tho).
 
 ## Final Thoughts
 
-*will continue one day*
+Deciding to give it a go and creating this library (in my free time) is one of the best decisions of my life since it has thought me to be patient, focused and happy (with a bit of swearing of course).  
+Thank you for reading and cheers!
