@@ -8,22 +8,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Build static files
-        id: build
-        uses: actions/checkout@v4
-        uses: actions/setup-node@v4
-        with:
-              node-version: 26
-              cache: 'npm'
-        run: |
-          npm ci
-          npm run build
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Upload static files as artifact
-        id: deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist/
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 26
+        cache: 'npm'
+      
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+      env:
+        NODE_ENV: production
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist/
 
   deploy:
     environment:
