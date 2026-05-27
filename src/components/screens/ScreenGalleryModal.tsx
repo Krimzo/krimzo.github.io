@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react'
-import type { Photo } from '~/types'
+import type { Screen } from '~/types'
 
 interface Props {
-  photos: Photo[]
+  screens: Screen[]
   title: string
   description?: string
   isOpen: boolean
@@ -12,7 +12,7 @@ interface Props {
   initialIndex?: number
 }
 
-const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen, onClose, initialIndex = 0 }) => {
+const ScreenGalleryModal: React.FC<Props> = ({ screens, title, description, isOpen, onClose, initialIndex = 0 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -22,14 +22,17 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
   const gap = 16 // gap-4 = 1rem = 16px
   const [canAnimate, setCanAnimate] = useState(false)
 
-  // 动态获取容器宽度，适配响应式
   useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth)
-    }
-  }, [isOpen])
+    const el = containerRef.current;
+    if (!el)
+      return;
+    const observer = new ResizeObserver(([entry]) => {
+      setContainerWidth(entry.contentRect.width);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isOpen]);
 
-  // 切换图片时，平滑动画到目标位置
   useEffect(() => {
     if (!isOpen) return
     if (canAnimate) {
@@ -84,13 +87,13 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
       let newIdx = currentIndex
       if (offset > threshold && currentIndex > 0) {
         newIdx = currentIndex - 1
-      } else if (offset < -threshold && currentIndex < photos.length - 1) {
+      } else if (offset < -threshold && currentIndex < screens.length - 1) {
         newIdx = currentIndex + 1
       }
       setCurrentIndex(newIdx)
       animate(x, -newIdx * (containerWidth + gap), { type: 'tween', duration: 0.5, ease: 'easeOut' })
     },
-    [containerWidth, gap, photos.length, x, currentIndex]
+    [containerWidth, gap, screens.length, x, currentIndex]
   )
 
   // 按钮切换
@@ -98,7 +101,7 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
     if (currentIndex > 0) setCurrentIndex((i) => i - 1)
   }
   const goNext = () => {
-    if (currentIndex < photos.length - 1) setCurrentIndex((i) => i + 1)
+    if (currentIndex < screens.length - 1) setCurrentIndex((i) => i + 1)
   }
 
   // 键盘切换
@@ -111,9 +114,9 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, currentIndex, photos.length])
+  }, [isOpen, currentIndex, screens.length])
 
-  if (photos.length === 0) return null
+  if (screens.length === 0) return null
 
   const modalContent = (
     <AnimatePresence onExitComplete={() => setCurrentHeight(100)}>
@@ -139,7 +142,7 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
           {/* 弹窗卡片 */}
           <motion.div
             key="modal-content"
-            className="relative bg-background shadow-2xl max-w-lg w-full mx-4 p-6"
+            className="relative bg-background shadow-2xl max-w-screen w-full mx-4 p-6"
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, y: 60, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -170,15 +173,15 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
               >
                 <motion.div
                   className="flex gap-4 items-start"
-                  style={{ x, width: photos.length * (containerWidth + gap) - gap }}
+                  style={{ x, width: screens.length * (containerWidth + gap) - gap }}
                   drag="x"
-                  dragConstraints={{ left: -(photos.length - 1) * (containerWidth + gap), right: 0 }}
+                  dragConstraints={{ left: -(screens.length - 1) * (containerWidth + gap), right: 0 }}
                   dragElastic={0.1}
                   onDragEnd={handleDragEnd}
                   transition={{ type: 'tween', duration: 0.5, ease: 'easeOut' }}
                 >
-                  {photos.map((photo, index) => {
-                    const imgSrc = typeof photo.src === 'string' ? photo.src : photo.src.src
+                  {screens.map((screen, index) => {
+                    const imgSrc = typeof screen.src === 'string' ? screen.src : screen.src.src
                     return (
                       <div
                         key={imgSrc}
@@ -191,7 +194,7 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
                         <img
                           draggable={false}
                           src={imgSrc}
-                          alt={photo.alt}
+                          alt={screen.alt}
                           className="max-w-full max-h-[70vh] object-contain select-none pointer-events-none"
                           onLoad={() => {
                             if (index === currentIndex && imageRefs.current[index]) {
@@ -206,7 +209,7 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
               </motion.div>
 
               {/* 左右导航按钮 */}
-              {photos.length > 1 && (
+              {screens.length > 1 && (
                 <>
                   <button
                     onClick={goPrev}
@@ -222,9 +225,9 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
                   </button>
                   <button
                     onClick={goNext}
-                    disabled={currentIndex === photos.length - 1}
+                    disabled={currentIndex === screens.length - 1}
                     className={`absolute w-8 h-8 -right-10 top-1/2 -translate-y-1/2 shadow-lg transition-all flex items-center justify-center ${
-                      currentIndex === photos.length - 1
+                      currentIndex === screens.length - 1
                         ? 'bg-muted text-muted-foreground cursor-not-allowed'
                         : 'bg-background hover:bg-accent text-foreground hover:text-accent-foreground'
                     }`}
@@ -238,7 +241,7 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
 
             {/* 计数器 */}
             <div className="mt-4 text-center text-sm text-muted-foreground font-medium">
-              {currentIndex + 1} / {photos.length}
+              {currentIndex + 1} / {screens.length}
             </div>
           </motion.div>
         </motion.div>
@@ -250,4 +253,4 @@ const PhotoGalleryModal: React.FC<Props> = ({ photos, title, description, isOpen
   return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null
 }
 
-export default PhotoGalleryModal
+export default ScreenGalleryModal

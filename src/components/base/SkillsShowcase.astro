@@ -26,16 +26,12 @@ const duplicateSkills = (skills: Skill[]) => [...skills, ...skills, ...skills, .
             style="transform: translateZ(0);"
           >
             {duplicatedSkills.map((skill) => {
-              const Tag = skill.url ? 'a' : 'div'
-              const props = skill.url ? { href: skill.url, target: '_blank', rel: 'noopener noreferrer' } : {}
+              const Tag = 'div'
               return (
                 <div class="skill-card mx-2">
-                  <Tag
-                    class="skill-inner group flex items-center gap-2 px-3 py-1.5 text-foreground whitespace-nowrap transition-all duration-200"
-                    {...props}
-                  >
-                    <img class={'flex items-center justify-center w-5 h-5'} src={skill.icon}/>
-                    <span class="font-sans text-sm font-medium">{skill.name}</span>
+                  <Tag class="skill-inner group flex items-center gap-2 px-3 py-1.5 text-foreground whitespace-nowrap transition-all duration-200">
+                    <img class="flex items-center justify-center w-5 h-5 no-select" src={skill.icon} alt={skill.icon} />
+                    <span class="font-sans text-sm font-medium no-select">{skill.name}</span>
                   </Tag>
                 </div>
               )
@@ -89,5 +85,12 @@ const duplicateSkills = (skills: Skill[]) => [...skills, ...skills, ...skills, .
 
   .skill-inner:hover {
     background: hsl(var(--tag-bg-hover));
+  }
+
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 </style>

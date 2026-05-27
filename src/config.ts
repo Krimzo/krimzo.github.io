@@ -3,7 +3,7 @@ import type {
   CommentConfig,
   GithubConfig,
   Link,
-  PhotosConfig,
+  ScreensConfig,
   PostConfig,
   ProjectConfig,
   Site,
@@ -36,7 +36,7 @@ export const HEADER_LINKS: Link[] = [
   },
   {
     name: 'Screenshots',
-    url: '/photos',
+    url: '/screens',
   },
 ]
 
@@ -59,7 +59,7 @@ export const FOOTER_LINKS: Link[] = [
   },
   {
     name: 'Screenshots',
-    url: '/photos',
+    url: '/screens',
   },
 ]
 
@@ -273,7 +273,7 @@ export const PROJECTS_CONFIG: ProjectConfig = {
   introduce: 'Some of my projects.',
 }
 
-export const PHOTOS_CONFIG: PhotosConfig = {
+export const PHOTOS_CONFIG: ScreensConfig = {
   title: 'Screenshots',
   description: 'Screenshots of my projects.',
   introduce: 'Screenshots of my projects.',
